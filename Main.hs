@@ -12,16 +12,18 @@ import Control.Lens
 import Data.Aeson
 import Data.Traversable (for)
 
-p0, p1 :: Input
+p0, p1, p13, p23 :: Input
 p0 = Input {id = 0, units = [Unit {members = [Cell {x = 0, y = 0}], pivot = Cell {x = 0, y = 0}},Unit {members = [Cell {x = 0, y = 0},Cell {x = 2, y = 0}], pivot = Cell {x = 1, y = 0}},Unit {members = [Cell {x = 0, y = 0},Cell {x = 0, y = 2}], pivot = Cell {x = 0, y = 1}},Unit {members = [Cell {x = 2, y = 0},Cell {x = 0, y = 1},Cell {x = 2, y = 2}], pivot = Cell {x = 1, y = 1}},Unit {members = [Cell {x = 0, y = 0},Cell {x = 1, y = 1},Cell {x = 0, y = 2}], pivot = Cell {x = 0, y = 1}},Unit {members = [Cell {x = 0, y = 0},Cell {x = 1, y = 0}], pivot = Cell {x = 0, y = 0}},Unit {members = [Cell {x = 0, y = 0},Cell {x = 1, y = 0}], pivot = Cell {x = 1, y = 0}},Unit {members = [Cell {x = 0, y = 0},Cell {x = 0, y = 1}], pivot = Cell {x = 0, y = 0}},Unit {members = [Cell {x = 0, y = 0},Cell {x = 0, y = 1}], pivot = Cell {x = 0, y = 1}},Unit {members = [Cell {x = 0, y = 0},Cell {x = 1, y = 0},Cell {x = 2, y = 0}], pivot = Cell {x = 0, y = 0}},Unit {members = [Cell {x = 0, y = 0},Cell {x = 1, y = 0},Cell {x = 2, y = 0}], pivot = Cell {x = 1, y = 0}},Unit {members = [Cell {x = 0, y = 0},Cell {x = 1, y = 0},Cell {x = 2, y = 0}], pivot = Cell {x = 2, y = 0}},Unit {members = [Cell {x = 0, y = 0},Cell {x = 0, y = 1},Cell {x = 0, y = 2}], pivot = Cell {x = 0, y = 0}},Unit {members = [Cell {x = 0, y = 0},Cell {x = 0, y = 1},Cell {x = 0, y = 2}], pivot = Cell {x = 0, y = 1}},Unit {members = [Cell {x = 0, y = 0},Cell {x = 0, y = 1},Cell {x = 0, y = 2}], pivot = Cell {x = 0, y = 2}},Unit {members = [Cell {x = 1, y = 0},Cell {x = 0, y = 1},Cell {x = 1, y = 2}], pivot = Cell {x = 1, y = 0}},Unit {members = [Cell {x = 1, y = 0},Cell {x = 0, y = 1},Cell {x = 1, y = 2}], pivot = Cell {x = 1, y = 1}},Unit {members = [Cell {x = 1, y = 0},Cell {x = 0, y = 1},Cell {x = 1, y = 2}], pivot = Cell {x = 1, y = 2}}], width = 10, height = 10, filled = [], sourceLength = 100, sourceSeeds = [0]}
 p1 = Input {id = 1, units = [Unit {members = [Cell {x = 0, y = 0}], pivot = Cell {x = 0, y = 0}}], width = 15, height = 15, filled = [Cell {x = 2, y = 4},Cell {x = 3, y = 4},Cell {x = 4, y = 4},Cell {x = 5, y = 4},Cell {x = 6, y = 4},Cell {x = 11, y = 4},Cell {x = 2, y = 5},Cell {x = 8, y = 5},Cell {x = 11, y = 5},Cell {x = 2, y = 6},Cell {x = 11, y = 6},Cell {x = 2, y = 7},Cell {x = 3, y = 7},Cell {x = 4, y = 7},Cell {x = 8, y = 7},Cell {x = 11, y = 7},Cell {x = 2, y = 8},Cell {x = 9, y = 8},Cell {x = 11, y = 8},Cell {x = 2, y = 9},Cell {x = 8, y = 9},Cell {x = 2, y = 10},Cell {x = 3, y = 10},Cell {x = 4, y = 10},Cell {x = 5, y = 10},Cell {x = 6, y = 10},Cell {x = 9, y = 10},Cell {x = 11, y = 10}], sourceLength = 100, sourceSeeds = [0]}
+p13 = Input {id = 13, units = [Unit {members = [Cell {x = -2, y = -2},Cell {x = 0, y = -2},Cell {x = 2, y = -2},Cell {x = -3, y = -1},Cell {x = -1, y = -1},Cell {x = 1, y = -1},Cell {x = 3, y = -1},Cell {x = -4, y = 0},Cell {x = 0, y = 0},Cell {x = 4, y = 0},Cell {x = -3, y = 1},Cell {x = -1, y = 1},Cell {x = 1, y = 1},Cell {x = 3, y = 1},Cell {x = -4, y = 2},Cell {x = 0, y = 2},Cell {x = 4, y = 2}], pivot = Cell {x = 0, y = 0}}], width = 30, height = 20, filled = [], sourceLength = 100, sourceSeeds = [0]}
+p23 = Input {id = 23, units = [Unit {members = [Cell {x = -2, y = 0},Cell {x = 0, y = 0},Cell {x = 2, y = 0}], pivot = Cell {x = 0, y = 0}}], width = 20, height = 9, filled = [Cell {x = 3, y = 3},Cell {x = 5, y = 3},Cell {x = 7, y = 3},Cell {x = 9, y = 3},Cell {x = 11, y = 3},Cell {x = 13, y = 3},Cell {x = 15, y = 3},Cell {x = 17, y = 3},Cell {x = 3, y = 5},Cell {x = 5, y = 5},Cell {x = 7, y = 5},Cell {x = 9, y = 5},Cell {x = 11, y = 5},Cell {x = 13, y = 5},Cell {x = 15, y = 5},Cell {x = 17, y = 5},Cell {x = 3, y = 7},Cell {x = 5, y = 7},Cell {x = 7, y = 7},Cell {x = 9, y = 7},Cell {x = 11, y = 7},Cell {x = 13, y = 7},Cell {x = 15, y = 7},Cell {x = 17, y = 7}], sourceLength = 100, sourceSeeds = [0]}
 
 -- inputFromFile "problems/problem_0.json"
 
 inputFromFile :: String -> IO Input
 inputFromFile s = do
   contents <- BS.readFile s
-  either fail return (eitherDecode contents)
+  either fail (return . simplifyInput) (eitherDecode contents)
 
 allProblems :: IO [Input]
 allProblems = for [0..23::Int] $ \i -> inputFromFile ("problems/problem_" ++ show i ++ ".json")
@@ -43,6 +45,16 @@ main = do
 
 printAllBoards :: IO [()]
 printAllBoards = allProblems >>= traverse (putStrLn . showBoard . initialBoard)
+
+printAllBoardsWithFirstUnit :: IO [()]
+printAllBoardsWithFirstUnit = allProblems >>= traverse (putStrLn . showBoard . initialBoardWithFirstUnit)
+
+initialBoardWithFirstUnit :: Input -> Board
+initialBoardWithFirstUnit p = place b firstUnit pos
+  where
+    firstUnit = head . head $ sources p
+    b = initialBoard p
+    pos = initialPos b firstUnit
 
 powers :: [String]
 powers = ["ei!", "ia!", "r'lyeh", "yuggoth", "satan"]

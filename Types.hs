@@ -1,10 +1,19 @@
-{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE
+    DeriveGeneric
+  , DeriveTraversable
+  , TypeFamilies
+  , TemplateHaskell
+  , FlexibleInstances
+  , UndecidableInstances
+  , MultiParamTypeClasses
+  #-}
 module Types where
 
 import GHC.Generics
 import Data.Aeson
 import Data.Ix
 import Data.Array.Unboxed
+import Data.Algebra
 
 type Board = UArray Cell Bool
 
@@ -25,8 +34,12 @@ instance Ix Cell where
   index (Cell x0 y0, Cell x1 y1) (Cell x2 y2) = index ((y0, x0), (y1, x1)) (y2, x2)
   inRange (Cell x0 y0, Cell x1 y1) (Cell x2 y2) = inRange ((y0, x0), (y1, x1)) (y2, x2)
   rangeSize (Cell x0 y0, Cell x1 y1) = rangeSize ((y0, x0), (y1, x1))
+instance (Class f Int) => Algebra f Cell where
+  algebra fc = Cell (evaluate (fmap x fc)) (evaluate (fmap y fc))
 
 data Unit = Unit { members :: [Cell], pivot :: Cell } deriving (Show, Generic)
+
+deriveInstance [t| Num Cell |]
 
 instance FromJSON Input
 instance FromJSON Cell
