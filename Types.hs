@@ -1,12 +1,12 @@
-{-# LANGUAGE DeriveGeneric, OverloadedStrings #-}
+{-# LANGUAGE DeriveGeneric #-}
 module Types where
 
-import Prelude hiding (id)
 import GHC.Generics
-import qualified Data.ByteString.Lazy as BS
 import Data.Aeson
-import Network.Wreq
-import Control.Lens
+import Data.Ix
+import Data.Array.Unboxed
+
+type Board = UArray Cell Bool
 
 data Input = Input
   { id :: Int
@@ -19,20 +19,18 @@ data Input = Input
   }
   deriving (Show, Generic)
 
-data Cell = Cell { x :: Int, y :: Int } deriving (Show, Eq, Generic)
+data Cell = Cell { x :: Int, y :: Int } deriving (Show, Eq, Ord, Generic)
+instance Ix Cell where
+  range (Cell x0 y0, Cell x1 y1) = map (uncurry $ flip Cell) $ range ((y0, x0), (y1, x1))
+  index (Cell x0 y0, Cell x1 y1) (Cell x2 y2) = index ((y0, x0), (y1, x1)) (y2, x2)
+  inRange (Cell x0 y0, Cell x1 y1) (Cell x2 y2) = inRange ((y0, x0), (y1, x1)) (y2, x2)
+  rangeSize (Cell x0 y0, Cell x1 y1) = rangeSize ((y0, x0), (y1, x1))
+
 data Unit = Unit { members :: [Cell], pivot :: Cell } deriving (Show, Generic)
 
 instance FromJSON Input
 instance FromJSON Cell
 instance FromJSON Unit
-
-problem_0 :: IO Input
-problem_0 = inputFromFile "problems/problem_0.json"
-
-inputFromFile :: String -> IO Input
-inputFromFile s = do
-  contents <- BS.readFile s
-  either fail return (eitherDecode contents)
 
 data Output = Output
   { problemId :: Int
@@ -42,14 +40,3 @@ data Output = Output
   deriving (Show, Generic)
 
 instance ToJSON Output
-
-makeOutput :: Input -> [String] -> [Output]
-makeOutput inp = zipWith (Output (id inp)) (sourceSeeds inp)
-
-upload :: [Output] -> IO ()
-upload out = do
-  let opts = defaults
-              & auth ?~ basicAuth "" "bg4PXjnbbA8E0dOqaq2FySO3bqTSt940sTRfluARiMQ="
-              & header "Content-Type" .~ ["application/json"]
-  r <- postWith opts "https://davar.icfpcontest.org/teams/58/solutions" (encode out)
-  print r
