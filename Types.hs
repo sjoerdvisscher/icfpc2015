@@ -19,7 +19,7 @@ type Board = UArray Cell Bool
 
 data Input = Input
   { id :: Int
-  , units :: [Unit]
+  , units :: [Unit']
   , width :: Int
   , height :: Int
   , filled :: [Cell]
@@ -28,22 +28,24 @@ data Input = Input
   }
   deriving (Show, Generic)
 
-data Cell = Cell { x :: Int, y :: Int } deriving (Show, Eq, Ord, Generic)
-instance Ix Cell where
-  range (Cell x0 y0, Cell x1 y1) = map (uncurry $ flip Cell) $ range ((y0, x0), (y1, x1))
-  index (Cell x0 y0, Cell x1 y1) (Cell x2 y2) = index ((y0, x0), (y1, x1)) (y2, x2)
-  inRange (Cell x0 y0, Cell x1 y1) (Cell x2 y2) = inRange ((y0, x0), (y1, x1)) (y2, x2)
-  rangeSize (Cell x0 y0, Cell x1 y1) = rangeSize ((y0, x0), (y1, x1))
-instance (Class f Int) => Algebra f Cell where
-  algebra fc = Cell (evaluate (fmap x fc)) (evaluate (fmap y fc))
+data V = V { x :: Int, y :: Int } deriving (Show, Eq, Ord, Generic)
+instance Ix V where
+  range (V x0 y0, V x1 y1) = map (uncurry $ flip V) $ range ((y0, x0), (y1, x1))
+  index (V x0 y0, V x1 y1) (V x2 y2) = index ((y0, x0), (y1, x1)) (y2, x2)
+  inRange (V x0 y0, V x1 y1) (V x2 y2) = inRange ((y0, x0), (y1, x1)) (y2, x2)
+  rangeSize (V x0 y0, V x1 y1) = rangeSize ((y0, x0), (y1, x1))
+instance (Class f Int) => Algebra f V where
+  algebra fc = V (evaluate (fmap x fc)) (evaluate (fmap y fc))
 
-data Unit = Unit { members :: [Cell], pivot :: Cell } deriving (Show, Generic)
+type Cell = V
+data Unit' = Unit { members :: Unit, pivot :: Cell } deriving (Show, Generic)
+type Unit = [Cell]
 
-deriveInstance [t| Num Cell |]
+deriveInstance [t| Num V |]
 
 instance FromJSON Input
-instance FromJSON Cell
-instance FromJSON Unit
+instance FromJSON V
+instance FromJSON Unit'
 
 data Output = Output
   { problemId :: Int
@@ -53,3 +55,12 @@ data Output = Output
   deriving (Show, Generic)
 
 instance ToJSON Output
+
+data Move = MoveW | MoveE | MoveSW | MoveSE | RotateCW | RotateCCW deriving (Show)
+
+data Game = Game {
+  gboard :: Board,
+  gscore :: Int,
+  gsource :: [Unit],
+  gsolution :: [Move]
+}
