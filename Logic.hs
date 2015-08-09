@@ -11,7 +11,10 @@ import Control.Monad
 import Control.Applicative
 
 sources :: Input -> [[Unit]]
-sources inp = source (members <$> units inp) (sourceLength inp) <$> sourceSeeds inp
+sources inp = sources1 inp <$> sourceSeeds inp
+
+sources1 :: Input -> Int -> [Unit]
+sources1 inp = source (members <$> units inp) (sourceLength inp)
 
 source :: [Unit] -> Int -> Int -> [Unit]
 source us len sd = map (\ix -> us !! (ix `mod` uslen)) $ take len (randoms sd)
@@ -60,24 +63,21 @@ fits :: Board -> [Unit] -> PosRot -> Bool
 fits board rots (PosRot pos r _) = not . getAny $ foldMap (Any . (board ?) . (+ pos)) (rots !! r)
 
 place :: Board -> [Unit] -> PosRot -> Board
-place board rots (PosRot pos r _) = fullLines h $ board // [ (c + pos, True) | c <- rots !! r ]
+place board rots (PosRot pos r _) = board // [ (c + pos, True) | c <- rots !! r ]
+
+fullLines :: Board -> Board
+fullLines board = fullLines' h board
   where
     (_, V w h) = bounds board
-    fullLines :: Int -> Board -> Board
-    fullLines (-1) b = b
-    fullLines y b = if isFull y b then fullLines y (clearLine y b) else fullLines (y - 1) b
+    fullLines' (-1) b = b
+    fullLines' y b = if isFull y b then fullLines' y (clearLine y b) else fullLines' (y - 1) b
     isFull :: Int -> Board -> Bool
     isFull y b = let o = offset y in and [ b ! V x y | x <- [o, o + 2..w] ]
     clearLine :: Int -> Board -> Board
     clearLine 0 b = b // [ (V x 0, False) | x <- [0, 2..w] ]
     clearLine y b = let o = offset y in clearLine (y - 1) $ b // [ (V x y, b ! V (x + 1 - 2*o) (y - 1)) | x <- [o, o + 2..w] ]
-
-offset :: Int -> Int
-offset y = if odd y then 1 else 0
-
-clearLine :: Int -> Int -> Board -> Board
-clearLine w 0 b = b // [ (V x 0, False) | x <- [0, 2..w] ]
-clearLine w y b = let o = offset y in clearLine w (y - 1) $ b // [ (V x y, b ! V (x + 1 - 2*o) (y - 1)) | x <- [o, o + 2..w] ]
+    offset :: Int -> Int
+    offset y = if odd y then 1 else 0
 
 rotateVCW, rotateVCCW :: V -> V
 rotateVCW  (V x0 y0) = V ((x0 - 3 * y0) `div` 2) ((y0 + x0) `div` 2)
@@ -153,4 +153,8 @@ playUnit b rots = if fits' initPos then Just (b', moves ++ " ") else Nothing
     fits' = fits b rots
     initPos = initialPos b rots
     (pr, moves) = tryAllMoves fits' (mkBoardVisited b initPos, initPos)
-    b' = place b rots pr
+    b' = fullLines $ place b rots pr
+
+playSimple' :: Board -> String -> [Unit] -> (Board, String)
+playSimple' b s [] = (b, s)
+playSimple' b s (u:us) = maybe (b, s) (\(b', s') -> playSimple' b' (s ++ s') us) $ playUnit b (rotations u)
